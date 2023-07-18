@@ -5,6 +5,10 @@ export const useUserDetailsStore = defineStore('userDetailsStore', {
     state() {
         return {
             user: null,
+            roles: [
+                {id: 1, text: 'Admin'},
+                {id: 2, text: 'User'},
+            ],
             isLoading: false,
             isSaving: false
         }
@@ -14,10 +18,11 @@ export const useUserDetailsStore = defineStore('userDetailsStore', {
             this.user = {
                 firstname: 'John',
                 lastname: 'Doe',
-                email: null,
+                email: 'foo@bar.de',
                 password: null,
                 number_of_children: null,
-                permission: []
+                permissions: [],
+                role_id: null
             };
         },
         loadUser() {

@@ -1,9 +1,10 @@
 <script setup>
 import {Form, Field} from "vee-validate";
 import {useUserDetailsStore} from "@/stores/user/userDetailsStore";
-import {onMounted, ref, toRefs} from "vue";
+import {onMounted, ref} from "vue";
+import {storeToRefs} from "pinia";
 
-let store = useUserDetailsStore();
+let {user, roles} = storeToRefs(useUserDetailsStore());
 const {createNewUser} = useUserDetailsStore();
 
 const form = ref(null)
@@ -25,29 +26,56 @@ onMounted(() => {
 
 <template>
   <v-container fluid>
-    <v-row v-if="store.user">
+    <v-row v-if="user !== null">
       <v-col>
-        <Form v-slot="{errors}"
-              ref="form">
+        <Form v-slot="{errors}" ref="form">
           <Field name="Firstname"
-                 v-model="store.user.firstname"
-                 rules="required|email"
+                 v-model="user.firstname"
+                 rules="required"
                  v-slot="{errors}">
             <v-text-field label="Firstname"
-                          v-model="store.user.firstname"
+                          v-model="user.firstname"
                           :error-messages="errors"/>
           </Field>
           <Field name="Lastname"
-                 :model-value="store.user.lastname"
+                 :model-value="user.lastname"
                  rules="required"
                  v-slot="{errors}">
             <v-text-field label="Lastname"
-                          v-model="store.user.lastname"
+                          v-model="user.lastname"
                           :error-messages="errors"/>
           </Field>
 
-          <v-btn type="submit" @click="onSubmit">
+          <Field name="E-Mail"
+                 v-model="user.email"
+                 rules="required|email"
+                 v-slot="{errors}">
+            <v-text-field label="E-Mail"
+                          v-model="user.email"
+                          :error-messages="errors"/>
+          </Field>
+
+          <Field name="Rolle"
+                 v-model="user.role_id"
+                 rules="required"
+                 v-slot="{errors}">
+            <v-select label="Rolle"
+                      clearable
+                      v-model="user.role_id"
+                      :items="roles"
+                      item-value="id"
+                      item-title="text"
+                      :error-messages="errors"/>
+          </Field>
+
+          <v-btn type="submit"
+                 class="mr-2"
+                 @click="onSubmit">
             Submit
+          </v-btn>
+
+          <v-btn color="red" @click="user.firstname = ''">
+            Clear user name
           </v-btn>
 
           <h3>Form errors:</h3>
@@ -55,7 +83,7 @@ onMounted(() => {
         </Form>
       </v-col>
       <v-col>
-        <pre>{{ store.user }}</pre>
+        <pre>{{ user }}</pre>
       </v-col>
     </v-row>
   </v-container>
